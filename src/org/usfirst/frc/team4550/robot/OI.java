@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-	
+
 	//// CREATING BUTTONS
 	// One type of button is a joystick button which is any button on a
 	//// joystick.
@@ -38,18 +38,18 @@ public class OI {
 	// Start the command when the button is released and let it run the command
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
-	
+
 	// The Joystick that the driver is using
 	private Joystick _controller;
-	
+
 	public OI()
 	{
 		//Sets _controller to to the correct input
 		int input = 0 ; // input 1
 		_controller = new Joystick ( input );
-		
+
 	}
-	
+
 	/**
 	 * Prints the axises in the console
 	 */
@@ -59,11 +59,11 @@ public class OI {
 		for( int i = 0; i < _controller.getAxisCount(); i++ )
 		{
 			System.out.printf( "%10s", i + " " + _controller.getRawAxis( i ) + "\t" );
-	
+
 		}
 		System.out.println();
 	}
-	
+
 	/**
 	 * Prints the value assigned to the pressed button
 	 */
@@ -76,7 +76,7 @@ public class OI {
 		}
 		System.out.println();
 	}
-	
+
 	/**
 	 * Get the value of the selected axis
 	 * @param axis
@@ -111,54 +111,54 @@ public class OI {
 		// Returns the right _controller's vertical value, which is inverted.
 		return _controller.getRawAxis( R_JOYSTICK_VERTICAL ) * -1;
 	}
-	
+
 	public double getL2( )
 	{
 		return _controller.getRawAxis(  L2 );
 	}
-	
+
 	public double getR2( )
 	{
 		return _controller.getRawAxis( R2 );
 	}
-	
+
 	public boolean getXButton( )
 	{
 		//Returns whether or not the x button is being pressed
 		return _controller.getRawButton( X_BUTTON );
 	}
-	
+
 	public boolean getOButton( )
 	{
 		return _controller.getRawButton( O_BUTTON );
 	}
-	
+
 	public boolean getTriangleButton( )
 	{
 		return _controller.getRawButton( TRIANGLE_BUTTON );
 	}
-	
+
 	public boolean getSquareButton( )
 	{
 		return _controller.getRawButton( SQUARE_BUTTON );
 	}
-	
+
 	public boolean getL1( ){
 		return _controller.getRawButton( L1_BUTTON );
 	}
-	
+
 	public boolean getR1( ){
 		return _controller.getRawButton( R1_BUTTON );
 	}
-	
+
 	public boolean getStart( ){
 		return _controller.getRawButton( START_BUTTON );
 	}
-	
+
 	public boolean getSelect( ){
 		return _controller.getRawButton( SELECT_BUTTON );
 	}
-	
+
 	/**
 	 * Normalizes the a given value
 	 * @param max
@@ -187,12 +187,12 @@ public class OI {
 		return value;
 	}
 	public static double deadBand( double value, double min, double deadBand, double max ){
-		if(value>-deadBand&&value<deadBand){
+		if(value > -deadBand && value < deadBand){
 			return 0;
-		} else if(value<-deadBand&&value>min){
-			return ((value*(10/9))+(1/9));
-		} else if (value<max){
-			return ((value*(10/9))-(1/9));
+		} else if(value < -deadBand && value>min){
+			return ((value * (10/9)) + (1/9));
+		} else if (value < max){
+			return ((value * (10/9)) - (1/9));
 		} else {
 			return 0;
 		}

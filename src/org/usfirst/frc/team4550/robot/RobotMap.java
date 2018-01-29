@@ -17,21 +17,21 @@ public class RobotMap {
 	// public static int rangefinderPort = 1;
 	// public static int rangefinderModule = 1;
 
-//	COMPETITION ROBOT CONSTANTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
+	//	COMPETITION ROBOT CONSTANTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	// Wheel Talons
-	public static final int LEFT_FORWARD_PORT = 2;
-	public static final int RIGHT_FORWARD_PORT = 1;
-	public static final int LEFT_REAR_PORT = 4;
-	public static final int RIGHT_REAR_PORT = 3;
-	
-	
+	public static final int LEFT_FORWARD_PORT = -1;
+	public static final int RIGHT_FORWARD_PORT = -1;
+	public static final int LEFT_REAR_PORT = -1;
+	public static final int RIGHT_REAR_PORT = -1;
+
+
 	// Wheel Talon Polarity
 	public static final boolean LEFT_FORWARD_REVERSE = false;
 	public static final boolean RIGHT_FORWARD_REVERSE = true;
 	public static final boolean LEFT_REAR_REVERSE = false;
 	public static final boolean RIGHT_REAR_REVERSE = true;		
-	
+
 	// Joystick Axises
 	public static final int L_JOYSTICK_HORIZONTAL = 0;
 	public static final int L_JOYSTICK_VERTICAL = 1;
@@ -60,15 +60,18 @@ public class RobotMap {
 
 
 	// Wheel Encoder Ports
-	public static final int ENCODER_A_LEFT = 1;
-	public static final int ENCODER_B_LEFT = 0;
-	
-	
-	
-	
-	
-	
-	
+	public static final int ENCODER_A_LEFT = -1;
+	public static final int ENCODER_B_LEFT = -1;
 
+	//Talon Ports for Intake
+	public static final int INTAKE_A = -1;
+	public static final int INTAKE_B = -1;
+
+	//Talon ports for Climber
+	public static final int CLIMBER = -1;
+	
+	//Talon ports for Elevator
+	public static final int ELEVATOR = -1;
+	
 }
 

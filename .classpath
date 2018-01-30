@@ -9,5 +9,12 @@
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="var" path="wpiutil" sourcepath="wpiutil.sources"/>
+	<classpathentry kind="lib" path="build/jars/cscore.jar"/>
+	<classpathentry kind="lib" path="build/jars/CTRLib.jar"/>
+	<classpathentry kind="lib" path="build/jars/navx_frc.jar"/>
+	<classpathentry kind="lib" path="build/jars/ntcore.jar"/>
+	<classpathentry kind="lib" path="build/jars/opencv.jar"/>
+	<classpathentry kind="lib" path="build/jars/WPILib.jar"/>
+	<classpathentry kind="lib" path="build/jars/wpiutil.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

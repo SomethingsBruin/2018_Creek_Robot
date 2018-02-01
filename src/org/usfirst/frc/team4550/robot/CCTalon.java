@@ -2,24 +2,19 @@ package org.usfirst.frc.team4550.robot;
 
 import edu.wpi.first.wpilibj.Talon;
 
-public class CCTalon extends Talon
-{
+public class CCTalon extends Talon{
 	private boolean _reverse;
 
-	public CCTalon(int channel, boolean reverse) 
-	{
+	public CCTalon(int channel, boolean reverse) {
 		super(channel);
 		_reverse = reverse;
 	}
 	
-	public void set(double speed) 
-	{
-		if (_reverse) 
-		{
+	public void set(double speed) {
+		if (_reverse) {
 			super.set(-speed);
 		}
-		else 
-		{
+		else {
 			super.set(speed);
 		}
 	}

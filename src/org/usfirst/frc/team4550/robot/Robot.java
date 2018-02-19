@@ -104,46 +104,46 @@ public class Robot extends IterativeRobot {
 			case LEFT:
 				if(switLocal.charAt(0) == 'L'){
 					System.out.println("Left Left");
-					_chassis.driveDist(800, drvSpd, _elevator);
+					_chassis.driveDist(1300, drvSpd, _elevator);
+					_chassis.turnToAngle(90, trnSpd);
+					_chassis.driveDist(200, drvSpd/* _elevator*/);
+					//_chassis.driveDist(50, drvSpd);
 	
-					_intake.setIntake(-.5, -.5);
+					_intake.setIntake(-.3, -.3);
 					Timer.delay(1.5);
 					_intake.setIntake( 0, 0);
 				} else {
 					//Left side - change for later
 					System.out.println("Left Right");
-					_chassis.driveDist(2000, drvSpd);
-//					_chassis.turnToAngle(90.0, trnSpd);
-//					_chassis.driveDist(250, drvSpd);
+					_chassis.driveDist(200, drvSpd);
+					_chassis.turnToAngle(90.0, trnSpd);
+					_chassis.driveDist(400, drvSpd);
+					_chassis.turnToAngle(-90.0, trnSpd);
+					_chassis.driveDist(600, trnSpd, _elevator);
 					
-					_elevator.setElevator(0.8);
-					Timer.delay(4.7);
-					_elevator.setElevator(0);
 					
-					_intake.setIntake(-.5, -.5);
-					Timer.delay(1.5);
-					_intake.setIntake( 0, 0);
+				//	_intake.setIntake(-.5, -.5);
+					//Timer.delay(1.5);
+				//	_intake.setIntake( 0, 0);
 					
 				}
 				break;
 			case RIGHT:
 				if(switLocal.charAt(0) == 'L'){
 					System.out.println("Right Left");
-					_chassis.driveDist(1300, drvSpd);
+					_chassis.driveDist(200, drvSpd);
 					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(1300, drvSpd);
+					_chassis.driveDist(400, drvSpd);
 					_chassis.turnToAngle(90.0, trnSpd);
 					_chassis.driveDist(200, drvSpd);
 				} else {
 					System.out.println("Right Right");
-					_chassis.driveDist(1200, drvSpd);
+					_chassis.driveDist(1400, drvSpd - 0.1, _elevator);
 					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(350, drvSpd, _elevator);
-					
-					_intake.setIntake(-.6, -6);// 1 is too fast
+					_chassis.driveDist(150, drvSpd);
+					_intake.setIntake(-.25, -.25);
 					Timer.delay(1.5);
 					_intake.setIntake( 0, 0);
-					
 
 				}
 				break;
@@ -156,14 +156,12 @@ public class Robot extends IterativeRobot {
 					Timer.delay(0.1);
 					_chassis.turnToAngle(90.0, trnSpd);
 					
-					
-					
 					_chassis.driveDist(625, drvSpd, _elevator);
 					Timer.delay(0.25);
 					
-					_intake.setIntake(-1.0, -1.0);
-					Timer.delay(1.5);
-					_intake.setIntake( 0, 0);
+//					_intake.setIntake(-1.0, -1.0);
+//					Timer.delay(1.5);
+//					_intake.setIntake( 0, 0);
 
 				} else {
 					System.out.println("Center Right");
@@ -175,21 +173,20 @@ public class Robot extends IterativeRobot {
 					_chassis.driveDist(600, drvSpd, _elevator);
 					Timer.delay(0.25);
 					
-					_intake.setIntake(-1.0, -1.0);
-					Timer.delay(1.5);
-					_intake.setIntake( 0, 0);
+//					_intake.setIntake(-1.0, -1.0);
+//					Timer.delay(1.5);
+//					_intake.setIntake( 0, 0);
 
 				}
 				break;
 			case FORWARD:
 				System.out.println("Forward Cross");
-				_chassis.driveDist(1000, drvSpd);
+				_chassis.driveDist(1200, drvSpd);
 				break;
 			case defaultAuto:
-				_chassis.turnToAngle(90, 0.8);
-				Timer.delay(1.0);
-				_chassis.turnToAngle(-90.0, 0.8);
-
+//				_chassis.turnToAngle(90, 0.8);
+//				Timer.delay(1.0);
+//				_chassis.turnToAngle(-90.0, 0.8);
 				break;
 
 			}

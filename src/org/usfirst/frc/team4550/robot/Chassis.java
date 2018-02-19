@@ -132,8 +132,11 @@ public class Chassis {
 			
 //			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 		}
-		elevator.setElevator(0.0);
 		tankDrive(0, 0);
+		while(t.get() < 2.75) {
+			elevator.setElevator(0.8);
+		}
+		elevator.setElevator(0.0);
 	}
 	
 	//Gets instance for chassis 
@@ -188,15 +191,15 @@ public class Chassis {
 		double Ki = 0.0;
 		double Kd = 0.0;
 		
-		if(speed > 0) {
+		if(angle > 0) {
 			// PID constants
-			Kp = 3.2;
+			Kp = 2.8; //3.2
 			Ki = 0.0;
-			Kd = 0.8;
+			Kd = 1.0; //0.8
 		}else {
-			Kp = 2.6;
-			Ki = 0.0;
-			Kd = 0.7;
+			Kp = 2.8;//2.6;
+			Ki = 0.0;//0.0;
+			Kd = 1.0;//.0.7;
 		}
 		// PID variables
 		double moveSpeed = speed / 2;

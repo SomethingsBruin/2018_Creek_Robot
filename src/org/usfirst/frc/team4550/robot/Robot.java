@@ -1,7 +1,10 @@
 package org.usfirst.frc.team4550.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -16,6 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //Class
 
 public class Robot extends IterativeRobot {
+	
+	
+	
 	boolean autoRun = false;
 	public String switLocal;
 	final String defaultAuto = "Default"; //should capatalize
@@ -23,20 +29,23 @@ public class Robot extends IterativeRobot {
 	final String LEFT = "Left Position";
 	final String RIGHT = "Right Postion";
 	final String CENTER = "Center Postition";
-
+	
 	String autoSelected;
 	private SendableChooser<String> _chooser;
 
 
 	Chassis _chassis;
 	OI _oi;
+	Elevator _elevator;
+	Intake _intake;
+	Climber _climber;
 
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
-	//Runs at Startup
+	//Runs at Startup	
 	public void robotInit() {
 		_chooser = new SendableChooser<String>();
 		_chooser.addDefault("Default Auto", defaultAuto);
@@ -48,6 +57,13 @@ public class Robot extends IterativeRobot {
 
 		_chassis = Chassis.getInstance();
 		_oi = new OI();
+		_elevator = new Elevator();
+		_intake = new Intake();
+		_climber = new Climber();
+		
+		_chassis.reset();
+		_climber.reset();
+		CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	/**
@@ -65,11 +81,12 @@ public class Robot extends IterativeRobot {
 	//Initializes Autonomous
 	
 	public void autonomousInit() {
-		switLocal = "R";//DriverStation.getInstance().getGameSpecificMessage();
+		switLocal = "RRR"; //DriverStation.getInstance().getGameSpecificMessage();
 		autoSelected = _chooser.getSelected();
 		autoRun = true;
 		_chassis.reset();
-		//		System.out.println("Auto selected: " + autoSelected);
+		_climber.reset();
+//		System.out.println("Auto selected: " + autoSelected);
 
 	}
 
@@ -79,7 +96,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	//Runs Autonomous
 	public void autonomousPeriodic() {
-		double drvSpd = 0.3;
+		double drvSpd = 0.4;
 		double trnSpd = 0.8;
 		double delay = 0;
 		if(autoRun){
@@ -87,16 +104,26 @@ public class Robot extends IterativeRobot {
 			case LEFT:
 				if(switLocal.charAt(0) == 'L'){
 					System.out.println("Left Left");
-					_chassis.driveDist(1400, drvSpd);
-					_chassis.turnToAngle(90.0, trnSpd);
-					_chassis.driveDist(300,drvSpd);
-					_chassis.turnToAngle(-90.0, trnSpd);
+					_chassis.driveDist(800, drvSpd, _elevator);
+	
+					_intake.setIntake(-.5, -.5);
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
 				} else {
+					//Left side - change for later
 					System.out.println("Left Right");
-					_chassis.driveDist(1400, drvSpd);
-					_chassis.turnToAngle(90.0, trnSpd);
-					_chassis.driveDist(1300, drvSpd);
-					_chassis.turnToAngle(-90.0, trnSpd);
+					_chassis.driveDist(2000, drvSpd);
+//					_chassis.turnToAngle(90.0, trnSpd);
+//					_chassis.driveDist(250, drvSpd);
+					
+					_elevator.setElevator(0.8);
+					Timer.delay(4.7);
+					_elevator.setElevator(0);
+					
+					_intake.setIntake(-.5, -.5);
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
+					
 				}
 				break;
 			case RIGHT:
@@ -109,126 +136,105 @@ public class Robot extends IterativeRobot {
 					_chassis.driveDist(200, drvSpd);
 				} else {
 					System.out.println("Right Right");
-					_chassis.driveDist(1400, drvSpd);
+					_chassis.driveDist(1200, drvSpd);
 					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(500,drvSpd);
-					_chassis.turnToAngle(90.0, trnSpd);
+					_chassis.driveDist(350, drvSpd, _elevator);
+					
+					_intake.setIntake(-.6, -6);// 1 is too fast
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
+					
+
 				}
 				break;
 			case CENTER:
 				if(switLocal.charAt(0) == 'L'){
 					System.out.println("Center Left");
 					_chassis.driveDist(200, drvSpd);
-					_chassis.turnToAngle(-45.0, trnSpd);
-					_chassis.driveDist(1838.477, drvSpd);
-					_chassis.turnToAngle(45.0, trnSpd);
+					_chassis.turnToAngle(-90.0, trnSpd);
+					_chassis.driveDist(450, drvSpd);
+					Timer.delay(0.1);
+					_chassis.turnToAngle(90.0, trnSpd);
+					
+					
+					
+					_chassis.driveDist(625, drvSpd, _elevator);
+					Timer.delay(0.25);
+					
+					_intake.setIntake(-1.0, -1.0);
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
+
 				} else {
 					System.out.println("Center Right");
 					_chassis.driveDist(200, drvSpd);
-					_chassis.turnToAngle(45.0, trnSpd);
-					_chassis.driveDist(1550, drvSpd);
-					_chassis.turnToAngle(-45.0, trnSpd);
+					_chassis.turnToAngle(90, trnSpd);
+					_chassis.driveDist(450, drvSpd);
+					_chassis.turnToAngle(-90, trnSpd);
+					
+					_chassis.driveDist(600, drvSpd, _elevator);
+					Timer.delay(0.25);
+					
+					_intake.setIntake(-1.0, -1.0);
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
+
 				}
 				break;
 			case FORWARD:
 				System.out.println("Forward Cross");
-				_chassis.driveDist(1300, drvSpd);
+				_chassis.driveDist(1000, drvSpd);
 				break;
 			case defaultAuto:
+				_chassis.turnToAngle(90, 0.8);
+				Timer.delay(1.0);
+				_chassis.turnToAngle(-90.0, 0.8);
+
 				break;
-/*			//Autonomous Cases 
-			case FORWARD_CROSS:				
-				System.out.println("Forward Cross");
-				_chassis.driveDist(1300, drvSpd);
-				break;
-				//				Checked
-			case LEFT_RIGHT:
-				System.out.println("Left Right");
-				_chassis.driveDist(1400, drvSpd);
-				_chassis.turnToAngle(90.0, trnSpd);
-				_chassis.driveDist(1300, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				break;
-				//				Checked
-			case LEFT_LEFT:
-				System.out.println("Left Left");
-				_chassis.driveDist(1400, drvSpd);
-				_chassis.turnToAngle(90.0, trnSpd);
-				_chassis.driveDist(300,drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				break;
-				//				Checked
-			case CENTER_RIGHT:
-				System.out.println("Center Right");
-				_chassis.driveDist(200, drvSpd);
-				_chassis.turnToAngle(45.0, trnSpd);
-				_chassis.driveDist(1550, drvSpd);
-				_chassis.turnToAngle(-45.0, trnSpd);
-				break;
-			case CENTER_LEFT:
-				System.out.println("Center Left");
-				_chassis.driveDist(200, drvSpd);
-				_chassis.turnToAngle(-45.0, trnSpd);
-				_chassis.driveDist(1838.477, drvSpd);
-				_chassis.turnToAngle(45.0, trnSpd);
-				break;
-			case RIGHT_LEFT:
-				System.out.println("Right Left");
-				_chassis.driveDist(1300, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				_chassis.driveDist(1300, drvSpd);
-				_chassis.turnToAngle(90.0, trnSpd);
-				_chassis.driveDist(200, drvSpd);
-				break;
-			case RIGHT_RIGHT:
-				System.out.println("Left Left");
-				_chassis.driveDist(1400, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				_chassis.driveDist(500,drvSpd);
-				_chassis.turnToAngle(90.0, trnSpd);
-				break;
-			case RIGHT_EXCHANGE:
-				System.out.println("Right Exchange");
-				_chassis.driveDist(200, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				_chassis.driveDist(500, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				_chassis.driveDist(200, drvSpd);
-				break;
-			case LEFT_EXCHANGE:
-				System.out.println("Left Exchange");
-				_chassis.driveDist(200, drvSpd);
-				_chassis.turnToAngle(90.0, trnSpd);
-				_chassis.driveDist(500, drvSpd);
-				_chassis.turnToAngle(90.0, trnSpd);
-				_chassis.driveDist(200, drvSpd);
-				break;
-			case CENTER_EXCHANGE:
-				System.out.println("Center Exchange");
-				_chassis.driveDist(200, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				_chassis.driveDist(100, drvSpd);
-				_chassis.turnToAngle(-90.0, trnSpd);
-				_chassis.driveDist(200, drvSpd);
-				break;
-			case defaultAuto:
-				break;
-			default:
-				// Put default auto code here
-				break;
-				*/
+
 			}
 		}
 		autoRun = false;
-	}
+	}	
 
 	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
+	
 	//Runs Teleop
 	public void teleopPeriodic(){
-		_chassis.tankDrive(OI.normalize(_oi.getLJoystickXAxis(), -1.0, 0, 1.0), OI.normalize(_oi.getRJoystickYAxis(),-1.0, 0, 1.0));
+		_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
+		System.out.println("Left Encoder: " + _chassis.getLeftEncoder());
+		System.out.println("Right Encoder: " + _chassis.getRightEncoder());
+		
+		//Runs intake wheels
+		while(_oi.getXButton()) {
+			_intake.setIntake(0.2, 0.35);
+		}while(_oi.getTriangleButton()) {
+			_intake.setIntake(-1.0, -1.0);
+		}
+	
+		_intake.setIntake( 0.0, 0.0 );
+		
+		//Run elevator - *Variable Speed*
+		while(_oi.getR2()> 0.1)
+			_elevator.setElevator( _oi.getR2() * .8);
+		while(_oi.getL2() > 0.1) {
+			_elevator.setElevator(-1 * _oi.getL2() * .6);
+		}
+		_elevator.setElevator(0.0);
+		
+		//Runs climber - *Constant Speed*
+		if(_oi.getR1()) {
+			_climber.setClimber(1.0);
+		}else if(_oi.getL1()) {
+			_climber.setClimber(-1.0);
+		}else {
+			_climber.setClimber(0.0);
+		}
+
 		//		System.out.println(_chassis.getAngle());
 	}
 

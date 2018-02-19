@@ -20,10 +20,10 @@ public class RobotMap {
 	//	COMPETITION ROBOT CONSTANTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	// Wheel Talons
-	public static final int LEFT_FORWARD_PORT = -1;
-	public static final int RIGHT_FORWARD_PORT = -1;
-	public static final int LEFT_REAR_PORT = -1;
-	public static final int RIGHT_REAR_PORT = -1;
+	public static final int LEFT_FORWARD_PORT = 5;
+	public static final int RIGHT_FORWARD_PORT = 2;
+	public static final int LEFT_REAR_PORT = 1;
+	public static final int RIGHT_REAR_PORT = 8;
 
 
 	// Wheel Talon Polarity
@@ -60,18 +60,31 @@ public class RobotMap {
 
 
 	// Wheel Encoder Ports
-	public static final int ENCODER_A_LEFT = -1;
-	public static final int ENCODER_B_LEFT = -1;
+	public static final int ENCODER_A_LEFT = 0;
+	public static final int ENCODER_B_LEFT = 1;
+	public static final int ENCODER_A_RIGHT = 2;
+	public static final int ENCODER_B_RIGHT = 3;
+	public static final int ENCODER_A_CLIMBER = 4;
+	public static final int ENCODER_B_CLIMBER = 5;
+	
 
 	//Talon Ports for Intake
-	public static final int INTAKE_A = -1;
-	public static final int INTAKE_B = -1;
+	public static final int INTAKE_A = 3;
+	public static final int INTAKE_B = 4;
 
 	//Talon ports for Climber
-	public static final int CLIMBER = -1;
+	public static final int CLIMBER = 6;
 	
 	//Talon ports for Elevator
-	public static final int ELEVATOR = -1;
+	public static final int ELEVATOR = 7;
+	
+	//Port for Break Beam Sensor 
+	public static final int BREAK_SENSOR = -1;
+	
+	//Port for LED Indicator
+	public static final int LED_PORT = -1;
+	
+	public static final int ULTRA_PORT = -1;
 	
 }
 

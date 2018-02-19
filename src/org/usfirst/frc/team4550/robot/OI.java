@@ -186,6 +186,28 @@ public class OI {
 		//Otherwise the value is fine
 		return value;
 	}
+	
+	public static double normalize( double value, double min, double zeroMin, double zeroMax, double max )
+	{
+		//If the value exceeds the maximum, set it back to the max
+		if( value > max )
+		{
+			return max;
+		}
+		//If the value is lower than the minimum, set it back to the min
+		else if( value < min )
+		{
+			return min;
+		}
+		//If the controller is at neutral position, set the speed to zero
+		else if ( value >= zeroMin && value <= zeroMax  )
+		{
+			return 0;
+		}
+		//Otherwise the value is fine
+		return value;
+	}
+	
 	public static double deadBand( double value, double min, double deadBand, double max ){
 		if(value > -deadBand && value < deadBand){
 			return 0;

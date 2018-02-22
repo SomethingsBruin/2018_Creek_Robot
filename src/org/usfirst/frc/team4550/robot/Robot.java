@@ -63,7 +63,8 @@ public class Robot extends IterativeRobot {
 		
 		_chassis.reset();
 		_climber.reset();
-		CameraServer.getInstance().startAutomaticCapture();
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	/**
@@ -184,7 +185,7 @@ public class Robot extends IterativeRobot {
 				_chassis.driveDist(1200, drvSpd);
 				break;
 			case defaultAuto:
-//				_chassis.turnToAngle(90, 0.8);
+				_chassis.turnToAngle(-90, 0.8);
 //				Timer.delay(1.0);
 //				_chassis.turnToAngle(-90.0, 0.8);
 				break;
@@ -208,9 +209,13 @@ public class Robot extends IterativeRobot {
 		
 		//Runs intake wheels
 		while(_oi.getXButton()) {
-			_intake.setIntake(0.2, 0.35);
+			_intake.setIntake(0.4, 0.55);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		}while(_oi.getTriangleButton()) {
-			_intake.setIntake(-1.0, -1.0);
+			_intake.setIntake(-0.8, -0.8);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		}
 	
 		_intake.setIntake( 0.0, 0.0 );
@@ -218,18 +223,28 @@ public class Robot extends IterativeRobot {
 		//Run elevator - *Variable Speed*
 		while(_oi.getR2()> 0.1)
 			_elevator.setElevator( _oi.getR2() * .8);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		while(_oi.getL2() > 0.1) {
 			_elevator.setElevator(-1 * _oi.getL2() * .6);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		}
 		_elevator.setElevator(0.0);
 		
 		//Runs climber - *Constant Speed*
 		if(_oi.getR1()) {
 			_climber.setClimber(1.0);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		}else if(_oi.getL1()) {
 			_climber.setClimber(-1.0);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		}else {
 			_climber.setClimber(0.0);
+			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+
 		}
 
 		//		System.out.println(_chassis.getAngle());

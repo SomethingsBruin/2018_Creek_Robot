@@ -12,7 +12,7 @@ public class Climber {
 	
 	public Climber(){
 		talon1 = new TalonSRX(RobotMap.CLIMBER);
-		talon1.setInverted(false);
+		talon1.setInverted(true);
 		talon1.setNeutralMode(NeutralMode.Brake);
 		_encoder = new Encoder(RobotMap.ENCODER_A_CLIMBER, RobotMap.ENCODER_B_CLIMBER);
 	}

@@ -151,6 +151,8 @@ public class Chassis {
 		return _leftEncoder.getDistance();
 	}
 	
+	
+	//URGENT REMINDER: RIGHT ENCODER RETURNS NEGATIVE VALUES ON COMP ROBOT - CHANGE BEFORE COMP
 	public double getRightEncoder() {
 		return _rightEncoder.getDistance();
 	}
@@ -193,13 +195,13 @@ public class Chassis {
 		
 		if(angle > 0) {
 			// PID constants
-			Kp = 2.8; //3.2
+			Kp = 3.2; //3.2 //2.8
 			Ki = 0.0;
-			Kd = 1.0; //0.8
+			Kd = 0.8; //0.8
 		}else {
-			Kp = 2.8;//2.6;
+			Kp = .69;//2.4;
 			Ki = 0.0;//0.0;
-			Kd = 1.0;//.0.7;
+			Kd = 0.7;//.0.7;
 		}
 		// PID variables
 		double moveSpeed = speed / 2;
@@ -236,6 +238,8 @@ public class Chassis {
 				break;
 			}
 		}
+		Timer.delay(1);
+		
 		System.out.println("Angle turnt to: " + this.getAngle());
 		System.out.println("Left Encoder value: " + this.getLeftEncoder());
 		System.out.println("Right Encoder value: " + this.getRightEncoder());

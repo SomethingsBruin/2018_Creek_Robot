@@ -314,9 +314,9 @@ public class Chassis {
 	
 	//Turns the wheels(for teleop)
 	public void turn(double speed) {
-		_frontLeft.set(ControlMode.PercentOutput, -speed);
-		_frontRight.set(ControlMode.PercentOutput, speed);
-		_rearLeft.set(ControlMode.PercentOutput, -speed);
-		_rearRight.set(ControlMode.PercentOutput, speed);
+		_frontLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
+		_frontRight.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
+		_rearLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
+		_rearRight.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
 	}
 }

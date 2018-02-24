@@ -41,12 +41,15 @@ public class OI {
 
 	// The Joystick that the driver is using
 	private Joystick _controller;
+	private Joystick _controller2;
 
 	public OI()
 	{
 		//Sets _controller to to the correct input
 		int input = 0 ; // input 1
+		int input2 = 1;
 		_controller = new Joystick ( input );
+		_controller2 = new Joystick ( input2 );
 
 	}
 
@@ -121,6 +124,18 @@ public class OI {
 	{
 		return _controller.getRawAxis( R2 );
 	}
+	
+	////
+	public double getL2C2( )
+	{
+		return _controller2.getRawAxis(  L2 );
+	}
+
+	public double getR2C2( )
+	{
+		return _controller2.getRawAxis( R2 );
+	}
+	////
 
 	public boolean getXButton( )
 	{
@@ -143,6 +158,20 @@ public class OI {
 		return _controller.getRawButton( SQUARE_BUTTON );
 	}
 
+	////
+	public boolean getXButtonC2( )
+	{
+		//Returns whether or not the x button is being pressed
+		return _controller2.getRawButton( X_BUTTON );
+	}
+	public boolean getTriangleButtonC2( )
+	{
+		return _controller2.getRawButton( TRIANGLE_BUTTON );
+	}
+	////
+
+	
+	
 	public boolean getL1( ){
 		return _controller.getRawButton( L1_BUTTON );
 	}
@@ -150,6 +179,16 @@ public class OI {
 	public boolean getR1( ){
 		return _controller.getRawButton( R1_BUTTON );
 	}
+	
+	////
+	public boolean getL1C2( ){
+		return _controller2.getRawButton( L1_BUTTON );
+	}
+
+	public boolean getR1C2( ){
+		return _controller2.getRawButton( R1_BUTTON );
+	}
+	////
 
 	public boolean getStart( ){
 		return _controller.getRawButton( START_BUTTON );

@@ -204,50 +204,97 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic(){
 		_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
 
-		System.out.println("Left Encoder: " + _chassis.getLeftEncoder());
-		System.out.println("Right Encoder: " + _chassis.getRightEncoder());
-		
-		//Runs intake wheels
-		while(_oi.getXButton()) {
+//		System.out.println("Left Encoder: " + _chassis.getLeftEncoder());
+//		System.out.println("Right Encoder: " + _chassis.getRightEncoder());
+//		
+		if(_oi.getXButtonC2()) {
 			_intake.setIntake(0.4, 0.55);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
-		}while(_oi.getTriangleButton()) {
+		}else if (_oi.getTriangleButtonC2()) {
 			_intake.setIntake(-0.8, -0.8);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
+		}else {
+			_intake.setIntake(0.0 , 0.0);
 		}
-	
-		_intake.setIntake( 0.0, 0.0 );
 		
-		//Run elevator - *Variable Speed*
-		while(_oi.getR2()> 0.1)
-			_elevator.setElevator( _oi.getR2() * .8);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
-		while(_oi.getL2() > 0.1) {
-			_elevator.setElevator(-1 * _oi.getL2() * .6);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
+		if(_oi.getR2C2()> 0.05) {
+			_elevator.setElevator( _oi.getR2C2() * 0.8);
+		}else if(_oi.getL2C2() > 0.05){
+			_elevator.setElevator( _oi.getL2C2() * -0.6);
+		}else{
+			_elevator.setElevator( 0 );
 		}
-		_elevator.setElevator(0.0);
 		
-		//Runs climber - *Constant Speed*
-		if(_oi.getR1()) {
+		if(_oi.getR1C2()) {
 			_climber.setClimber(1.0);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
-		}else if(_oi.getL1()) {
+		}else if(_oi.getL1C2()) {
 			_climber.setClimber(-1.0);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
 		}else {
 			_climber.setClimber(0.0);
-			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-
 		}
-
-		//		System.out.println(_chassis.getAngle());
+		
+		//Runs intake wheels
+//		while(_oi.getXButtonC2()) {
+//			_intake.setIntake(0.4, 0.55);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//			if(_oi.getR1C2()) {
+//				_climber.setClimber(1.0);
+//			}else if(_oi.getL1C2()) {
+//				_climber.setClimber(-1.0);
+//			}else {
+//				_climber.setClimber(0.0);
+//			}
+//		}
+//		
+//		while(_oi.getTriangleButtonC2()) {
+//			_intake.setIntake(-0.8, -0.8);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//			if(_oi.getR1C2()) {
+//				_climber.setClimber(1.0);
+//			}else if(_oi.getL1C2()) {
+//				_climber.setClimber(-1.0);
+//			}else {
+//				_climber.setClimber(0.0);
+//			}
+//		}
+//	
+//		_intake.setIntake( 0.0, 0.0 );
+//		
+//		//Run elevator - *Variable Speed*
+//		while(_oi.getR2C2()> 0.1)
+//			_elevator.setElevator( _oi.getR2C2() * .8);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//			if(_oi.getR1C2()) {
+//				_climber.setClimber(1.0);
+//			}else if(_oi.getL1C2()) {
+//				_climber.setClimber(-1.0);
+//			}else {
+//				_climber.setClimber(0.0);
+//			}
+//		while(_oi.getL2C2() > 0.1) {
+//			_elevator.setElevator(-1 * _oi.getL2C2() * .6);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//			if(_oi.getR1C2()) {
+//				_climber.setClimber(1.0);
+//			}else if(_oi.getL1C2()) {
+//				_climber.setClimber(-1.0);
+//			}else {
+//				_climber.setClimber(0.0);
+//			}
+//		}
+//		_elevator.setElevator(0.0);
+//		
+//		//Runs climber - *Constant Speed*
+//		if(_oi.getR1C2()) {
+//			_climber.setClimber(1.0);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//		}else if(_oi.getL1C2()) {
+//			_climber.setClimber(-1.0);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//		}else {
+//			_climber.setClimber(0.0);
+//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+//		}
+//
+//		//		System.out.println(_chassis.getAngle());
 	}
 
 	/**

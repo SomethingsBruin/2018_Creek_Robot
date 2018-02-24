@@ -28,6 +28,7 @@ public class Intake {
 	public void setIntake(double speed1, double speed2){
 			_talon1.set(ControlMode.PercentOutput, speed1);
 			_talon2.set(ControlMode.PercentOutput, speed2);
+		
 //			if(!breakCheck()) {
 //				_led.pulse(50);
 //			}

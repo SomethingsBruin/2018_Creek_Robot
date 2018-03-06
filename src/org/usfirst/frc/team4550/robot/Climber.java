@@ -19,7 +19,7 @@ public class Climber {
 	
 	
 	public void setClimber(double speed){
-		talon1.set(ControlMode.PercentOutput, -speed);
+		talon1.set(ControlMode.PercentOutput, speed);
 	}
 	
 	public double getDistance() {

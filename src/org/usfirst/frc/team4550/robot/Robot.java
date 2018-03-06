@@ -39,6 +39,8 @@ public class Robot extends IterativeRobot {
 	Elevator _elevator;
 	Intake _intake;
 	Climber _climber;
+	
+	double spdMult = 1.0;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -63,8 +65,8 @@ public class Robot extends IterativeRobot {
 		
 		_chassis.reset();
 		_climber.reset();
-		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
+//		CameraServer.getInstance().startAutomaticCapture(0);
+//		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	/**
@@ -82,7 +84,7 @@ public class Robot extends IterativeRobot {
 	//Initializes Autonomous
 	
 	public void autonomousInit() {
-		switLocal = "RRR"; //DriverStation.getInstance().getGameSpecificMessage();
+		switLocal = DriverStation.getInstance().getGameSpecificMessage();
 		autoSelected = _chooser.getSelected();
 		autoRun = true;
 		_chassis.reset();
@@ -105,6 +107,8 @@ public class Robot extends IterativeRobot {
 			case LEFT:
 				if(switLocal.charAt(0) == 'L'){
 					System.out.println("Left Left");
+					_chassis.driveDistNonTrapezoidal(100, drvSpd);
+					Timer.delay(1.0);
 					_chassis.driveDist(1300, drvSpd, _elevator);
 					_chassis.turnToAngle(90, trnSpd);
 					_chassis.driveDist(200, drvSpd/* _elevator*/);
@@ -112,34 +116,36 @@ public class Robot extends IterativeRobot {
 	
 					_intake.setIntake(-.3, -.3);
 					Timer.delay(1.5);
-					_intake.setIntake( 0, 0);
+					_intake.setIntake( 0, 0);	
 				} else {
 					//Left side - change for later
 					System.out.println("Left Right");
-					_chassis.driveDist(200, drvSpd);
-					_chassis.turnToAngle(90.0, trnSpd);
-					_chassis.driveDist(400, drvSpd);
-					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(600, trnSpd, _elevator);
-					
-					
-				//	_intake.setIntake(-.5, -.5);
-					//Timer.delay(1.5);
-				//	_intake.setIntake( 0, 0);
+//					_chassis.driveDist(200, drvSpd);
+//					_chassis.turnToAngle(90.0, trnSpd);
+//					_chassis.driveDist(400, drvSpd);
+//					_chassis.turnToAngle(-90.0, trnSpd);
+//					_chassis.driveDist(600, trnSpd, _elevator);
+					_chassis.driveDistNonTrapezoidal(200, drvSpd + 0.1);
+					Timer.delay(1.0);
+					_chassis.driveDist(1200, drvSpd);
 					
 				}
 				break;
 			case RIGHT:
 				if(switLocal.charAt(0) == 'L'){
 					System.out.println("Right Left");
-					_chassis.driveDist(200, drvSpd);
-					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(400, drvSpd);
-					_chassis.turnToAngle(90.0, trnSpd);
-					_chassis.driveDist(200, drvSpd);
+//					_chassis.driveDist(200, drvSpd);
+//					_chassis.turnToAngle(-90.0, trnSpd);
+//					_chassis.driveDist(400, drvSpd);
+//					_chassis.turnToAngle(90.0, trnSpd);
+//					_chassis.driveDist(200, drvSpd);
+//					To be Cont'd
+					_chassis.driveDist(1400, drvSpd);
 				} else {
 					System.out.println("Right Right");
-					_chassis.driveDist(1400, drvSpd - 0.1, _elevator);
+					_chassis.driveDistNonTrapezoidal(100, drvSpd+ 0.1);
+					Timer.delay(1.0);
+					_chassis.driveDist(1300, drvSpd - 0.1, _elevator);
 					_chassis.turnToAngle(-90.0, trnSpd);
 					_chassis.driveDist(150, drvSpd);
 					_intake.setIntake(-.25, -.25);
@@ -153,41 +159,43 @@ public class Robot extends IterativeRobot {
 					System.out.println("Center Left");
 					_chassis.driveDist(200, drvSpd);
 					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(450, drvSpd);
+					_chassis.driveDist(575, drvSpd);
 					Timer.delay(0.1);
-					_chassis.turnToAngle(90.0, trnSpd);
+					_chassis.turnToAngle(85, trnSpd);
 					
 					_chassis.driveDist(625, drvSpd, _elevator);
 					Timer.delay(0.25);
 					
-//					_intake.setIntake(-1.0, -1.0);
-//					Timer.delay(1.5);
-//					_intake.setIntake( 0, 0);
+					_intake.setIntake(-.25, -.25);
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
 
 				} else {
 					System.out.println("Center Right");
 					_chassis.driveDist(200, drvSpd);
 					_chassis.turnToAngle(90, trnSpd);
-					_chassis.driveDist(450, drvSpd);
-					_chassis.turnToAngle(-90, trnSpd);
+					_chassis.driveDist(400, drvSpd);
+					_chassis.turnToAngle(-85, trnSpd);
 					
 					_chassis.driveDist(600, drvSpd, _elevator);
 					Timer.delay(0.25);
 					
-//					_intake.setIntake(-1.0, -1.0);
-//					Timer.delay(1.5);
-//					_intake.setIntake( 0, 0);
+					_intake.setIntake(-.25, -.25);
+					Timer.delay(1.5);
+					_intake.setIntake( 0, 0);
 
 				}
 				break;
 			case FORWARD:
 				System.out.println("Forward Cross");
+				_chassis.driveDistNonTrapezoidal(200, drvSpd + 0.1);
+				Timer.delay(1.0);
 				_chassis.driveDist(1200, drvSpd);
 				break;
 			case defaultAuto:
-				_chassis.turnToAngle(-90, 0.8);
-//				Timer.delay(1.0);
-//				_chassis.turnToAngle(-90.0, 0.8);
+				_chassis.turnToAngle(90, 0.35);
+				Timer.delay(1.0);
+//				_chassis.turnToAngle(90.0, 0.35);
 				break;
 
 			}
@@ -202,10 +210,16 @@ public class Robot extends IterativeRobot {
 	
 	//Runs Teleop
 	public void teleopPeriodic(){
-		_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
+		_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis() * spdMult, 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis()*spdMult, 3) ,-1.0, 0, 1.0));
 
-//		System.out.println("Left Encoder: " + _chassis.getLeftEncoder());
-//		System.out.println("Right Encoder: " + _chassis.getRightEncoder());
+		if(_oi.getXButton()) {
+			spdMult = 0.5;
+		}else if(_oi.getTriangleButton()) {
+			spdMult = 1.0;
+		}
+		
+//		System.out.println("Angle: " + _chassis.getAngle());
+	//	System.out.println("Right Encoder: " + _chassis.getRightEncoder());
 //		
 		if(_oi.getXButtonC2()) {
 			_intake.setIntake(0.4, 0.55);
@@ -216,9 +230,9 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if(_oi.getR2C2()> 0.05) {
-			_elevator.setElevator( _oi.getR2C2() * 0.8);
+			_elevator.setElevator( Math.pow(_oi.normalize(_oi.getR2C2(), -1, 0, 1), 3)) ;
 		}else if(_oi.getL2C2() > 0.05){
-			_elevator.setElevator( _oi.getL2C2() * -0.6);
+			_elevator.setElevator(  Math.pow(_oi.normalize(-1.0 *_oi.getL2C2(), -1, 0, 1), 3));
 		}else{
 			_elevator.setElevator( 0 );
 		}
@@ -238,7 +252,8 @@ public class Robot extends IterativeRobot {
 //			if(_oi.getR1C2()) {
 //				_climber.setClimber(1.0);
 //			}else if(_oi.getL1C2()) {
-//				_climber.setClimber(-1.0);
+//		
+//		_climber.setClimber(-1.0);
 //			}else {
 //				_climber.setClimber(0.0);
 //			}

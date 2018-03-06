@@ -93,12 +93,25 @@ public class Chassis {
 		}
 		return 0.0;
 	}
+	public void driveDistNonTrapezoidal(double distance, double speed) {
+		reset();
+		Timer t = new Timer();
+		t.start();
+		while ( ( getLeftEncoder() + getRightEncoder() )/2 <= distance && t.get() < 3) {
+			tankDrive(0, speed);
+//			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
+		}
+		tankDrive(0, 0);
+		
+		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
+	}
+	
 	//Drives to a Distance 
 	public void driveDist(double distance, double speed) {
 		reset();
 		Timer t = new Timer();
 		t.start();
-		while ( ( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2 <= distance && t.get() < 15) {
+		while ( ( getLeftEncoder() + getRightEncoder() )/2 <= distance && t.get() < 15) {
 			if (t.get() < .5) {
 				tankDrive(0, speed * (t.get() * 2));
 			} else if (distance - _leftEncoder.getDistance() < 100) {
@@ -109,13 +122,15 @@ public class Chassis {
 //			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 		}
 		tankDrive(0, 0);
+		
+		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 	}
 	
 	public void driveDist(double distance, double speed, Elevator elevator) {
 		reset();
 		Timer t = new Timer();
 		t.start();
-		while ( ( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2 <= distance && t.get() < 15) {
+		while ( ( getLeftEncoder() + getRightEncoder() )/2 <= distance && t.get() < 15) {
 			if (t.get() < .5) {
 				tankDrive(0, speed * (t.get() * 2));
 			} else if (distance - _leftEncoder.getDistance() < 100) {
@@ -137,6 +152,7 @@ public class Chassis {
 			elevator.setElevator(0.8);
 		}
 		elevator.setElevator(0.0);
+		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 	}
 	
 	//Gets instance for chassis 
@@ -172,7 +188,7 @@ public class Chassis {
 	//	} 
 
 	//	public double returnDistance() {
-	//		_ultra.
+	//		_ultra
 	//	}
 
 	//Stops the Robot
@@ -187,22 +203,13 @@ public class Chassis {
 		reset();
 
 		// Default speed is at 0.7
-		long maxTime = 1600;// 1.5 seconds
+		long maxTime = 1000;// 1.5 seconds
 		double time = 0.0;
-		double Kp = 0.0;
+		double Kp = 0.69;
 		double Ki = 0.0;
-		double Kd = 0.0;
+		double Kd = 0.7;
 		
-		if(angle > 0) {
-			// PID constants
-			Kp = 3.2; //3.2 //2.8
-			Ki = 0.0;
-			Kd = 0.8; //0.8
-		}else {
-			Kp = .69;//2.4;
-			Ki = 0.0;//0.0;
-			Kd = 0.7;//.0.7;
-		}
+
 		// PID variables
 		double moveSpeed = speed / 2;
 		double error = 0.0;
@@ -230,10 +237,7 @@ public class Chassis {
 
 			this.turn(OI.normalize(-1 * (p + i + d), -moveSpeed, 0, moveSpeed));
 
-			if ((Math.abs(errorSum) < 0.5)
-					|| (System.currentTimeMillis() > time + maxTime)) {
-				// System.out.println("Time" + System.currentTimeMillis() );
-//				System.out.println("Angle " + this.getAngle());
+			if ((Math.abs(errorSum) < 0.5) || (System.currentTimeMillis() > time + maxTime)) {
 				done = true;
 				break;
 			}
@@ -248,72 +252,9 @@ public class Chassis {
 		done = false;
 	}
 	
-//	public void turnToEncoder(double average, double speed) {
-//		boolean done = false;
-//		reset();
-//
-//		// Default speed is at 0.7
-//		long maxTime = 1500;// 1.5 seconds
-//		double time = 0.0;
-//		
-//		double Kp = 0.0;
-//		double Ki = 0.0;
-//		double Kd = 0.0;
-//		
-//		if(speed > 0) {
-//			// PID constants
-//			Kp = 1.1;
-//			Ki = 0.0;
-//			Kd = 0.0;
-//		}else {
-//			Kp = 6.0;
-//			Ki = 0.0;
-//			Kd = 0.0;
-//		}
-//		// PID variables
-//		double moveSpeed = speed / 2;
-//		double error = 0.0;
-//		double prevError = 0.0;
-//		double errorSum = 0.0;
-//
-//		average += (this.getLeftEncoder() - this.getRightEncoder())/2;
-//
-//		time = System.currentTimeMillis();
-//
-//		// PID loop
-//		while (!done) {
-//			prevError = error;
-//			// System.out.println( " GYRO: " + this.getAngle() );
-//			error = (average - ((this.getLeftEncoder() - this.getRightEncoder())/2) )/ 100.0;
-//			errorSum += error;
-//			errorSum = OI.normalize(errorSum, -200, 0, 200);
-//
-//			 System.out.println( "error: " + error + " errorSum: " + errorSum );
-//
-//			double p = error * Kp;
-//			double i = errorSum * Ki;
-//			double d = (error - prevError) * Kd;
-//
-//			this.turn(OI.normalize(-1 * (p + i + d), -moveSpeed, 0, moveSpeed));
-//
-//			if ((Math.abs(errorSum) < 2.0)
-//					|| (System.currentTimeMillis() > time + maxTime)) {
-//				// System.out.println("Time" + System.currentTimeMillis() );
-////				System.out.println("Angle " + this.getAngle());
-//				done = true;
-//				break;
-//			}
-//		}
-//		System.out.println("Angle turnt to: " + this.getAngle());
-//		System.out.println("Left Encoder value: " + this.getLeftEncoder());
-//		System.out.println("Right Encoder value: " + this.getRightEncoder());
-//		System.out.println("Avg: " + (this.getLeftEncoder() - this.getRightEncoder())/2 );
-//		this.stop();
-//		done = false;
-//	}
-	
 	//Turns the wheels(for teleop)
 	public void turn(double speed) {
+		//RIGHT MOTORS: CHANGE SPEED TO POSITIVE
 		_frontLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
 		_frontRight.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
 		_rearLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));

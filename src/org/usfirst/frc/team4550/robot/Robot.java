@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4550.robot;
 
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,17 +20,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //Class
 
 public class Robot extends IterativeRobot {
-	
-	
-	
+
+
+
 	boolean autoRun = false;
-	public String switLocal;
-	final String defaultAuto = "Default"; //should capatalize
+	public String switLoc;
+	final String defaultAuto = "Default"; //should capitalize
 	final String FORWARD = "Forward Cross";
 	final String LEFT = "Left Position";
 	final String RIGHT = "Right Postion";
 	final String CENTER = "Center Postition";
-	
+
 	String autoSelected;
 	private SendableChooser<String> _chooser;
 
@@ -40,6 +41,10 @@ public class Robot extends IterativeRobot {
 	Intake _intake;
 	Climber _climber;
 	
+	UsbCamera _camera1;
+	UsbCamera _camera2;
+	CameraServer server;
+
 	double spdMult = 1.0;
 
 	/**
@@ -62,11 +67,22 @@ public class Robot extends IterativeRobot {
 		_elevator = new Elevator();
 		_intake = new Intake();
 		_climber = new Climber();
-		
+
 		_chassis.reset();
 		_climber.reset();
-//		CameraServer.getInstance().startAutomaticCapture(0);
+		server = CameraServer.getInstance();
+//		CameraServer.getInstance().startAutomaticCapture();
 //		CameraServer.getInstance().startAutomaticCapture(1);
+		_camera1 = new UsbCamera("cam0", 0);
+		_camera1.setBrightness(20);
+		_camera1.setFPS(15);
+		_camera2 = new UsbCamera("cam1", 1);
+		_camera2.setBrightness(20);
+		_camera2.setFPS(15);
+		
+		
+		server.startAutomaticCapture(_camera1);
+		server.startAutomaticCapture(_camera2);
 	}
 
 	/**
@@ -82,14 +98,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	//Initializes Autonomous
-	
+
 	public void autonomousInit() {
-		switLocal = DriverStation.getInstance().getGameSpecificMessage();
+		switLoc = DriverStation.getInstance().getGameSpecificMessage();
 		autoSelected = _chooser.getSelected();
 		autoRun = true;
 		_chassis.reset();
 		_climber.reset();
-//		System.out.println("Auto selected: " + autoSelected);
+		//		System.out.println("Auto selected: " + autoSelected);
 
 	}
 
@@ -105,81 +121,95 @@ public class Robot extends IterativeRobot {
 		if(autoRun){
 			switch (autoSelected) {
 			case LEFT:
-				if(switLocal.charAt(0) == 'L'){
+				if(switLoc.charAt(0) == 'L'){
 					System.out.println("Left Left");
-					_chassis.driveDistNonTrapezoidal(100, drvSpd);
-					Timer.delay(1.0);
-					_chassis.driveDist(1300, drvSpd, _elevator);
-					_chassis.turnToAngle(90, trnSpd);
-					_chassis.driveDist(200, drvSpd/* _elevator*/);
+					_chassis.driveDistNonTrapezoidal(100, drvSpd+.1);
+					Timer.delay(.5);
+					_chassis.driveDist(1300, drvSpd);
+					Timer.delay(.2);
+					_chassis.turnToAngle(85, trnSpd);
+					_chassis.driveDist(200, drvSpd, _elevator, 2.0);
 					//_chassis.driveDist(50, drvSpd);
-	
+
 					_intake.setIntake(-.3, -.3);
 					Timer.delay(1.5);
 					_intake.setIntake( 0, 0);	
 				} else {
 					//Left side - change for later
 					System.out.println("Left Right");
-//					_chassis.driveDist(200, drvSpd);
-//					_chassis.turnToAngle(90.0, trnSpd);
-//					_chassis.driveDist(400, drvSpd);
-//					_chassis.turnToAngle(-90.0, trnSpd);
-//					_chassis.driveDist(600, trnSpd, _elevator);
-					_chassis.driveDistNonTrapezoidal(200, drvSpd + 0.1);
-					Timer.delay(1.0);
-					_chassis.driveDist(1200, drvSpd);
-					
+					if(switLoc.charAt(1) == 'L') {
+						_chassis.driveDistNonTrapezoidal(400, drvSpd + 0.1);
+						Timer.delay(0.5);
+						_chassis.driveDist(2300, drvSpd, _elevator, 5.0);
+						Timer.delay(0.2);
+						_chassis.turnToAngle(90, trnSpd-0.1);
+						//						_chassis.driveDist(150, drvSpd, _elevator, 2.0);
+
+						_intake.setIntake(-.3, -.3);
+						Timer.delay(1.5);
+						_intake.setIntake( 0, 0);	
+					}else {
+						_chassis.driveDistNonTrapezoidal(200, drvSpd + 0.1);
+						Timer.delay(.5);
+						_chassis.driveDist(1200, drvSpd);
+					}
 				}
 				break;
 			case RIGHT:
-				if(switLocal.charAt(0) == 'L'){
+				if(switLoc.charAt(0) == 'L'){
 					System.out.println("Right Left");
-//					_chassis.driveDist(200, drvSpd);
-//					_chassis.turnToAngle(-90.0, trnSpd);
-//					_chassis.driveDist(400, drvSpd);
-//					_chassis.turnToAngle(90.0, trnSpd);
-//					_chassis.driveDist(200, drvSpd);
-//					To be Cont'd
-					_chassis.driveDist(1400, drvSpd);
+					if(switLoc.charAt(1) == 'R') {
+						_chassis.driveDistNonTrapezoidal(400, drvSpd + 0.1);
+						Timer.delay(0.5);
+						_chassis.driveDist(2300, drvSpd, _elevator, 5.00);
+						Timer.delay(0.3);
+						_chassis.turnToAngle(-85.0, trnSpd-0.1);
+
+
+						_intake.setIntake(-.3, -.3);
+						Timer.delay(1.5);
+						_intake.setIntake( 0, 0);
+					}else {
+						_chassis.driveDist(1400, drvSpd);
+					}
 				} else {
-					System.out.println("Right Right");
 					_chassis.driveDistNonTrapezoidal(100, drvSpd+ 0.1);
 					Timer.delay(1.0);
-					_chassis.driveDist(1300, drvSpd - 0.1, _elevator);
+					_chassis.driveDist(1300, drvSpd, _elevator, 2.00);
+					Timer.delay(.2);
 					_chassis.turnToAngle(-90.0, trnSpd);
-					_chassis.driveDist(150, drvSpd);
+					_chassis.driveDist(200, drvSpd);
 					_intake.setIntake(-.25, -.25);
 					Timer.delay(1.5);
 					_intake.setIntake( 0, 0);
-
 				}
 				break;
 			case CENTER:
-				if(switLocal.charAt(0) == 'L'){
+				if(switLoc.charAt(0) == 'L'){
 					System.out.println("Center Left");
-					_chassis.driveDist(200, drvSpd);
+					_chassis.driveDist(500, drvSpd);
+					Timer.delay(0.2);
 					_chassis.turnToAngle(-90.0, trnSpd);
 					_chassis.driveDist(575, drvSpd);
-					Timer.delay(0.1);
-					_chassis.turnToAngle(85, trnSpd);
-					
-					_chassis.driveDist(625, drvSpd, _elevator);
+					Timer.delay(0.2);
+					_chassis.turnToAngle(90, trnSpd);
+
+					_chassis.driveDist(350, drvSpd, _elevator, 1.75);
 					Timer.delay(0.25);
-					
 					_intake.setIntake(-.25, -.25);
 					Timer.delay(1.5);
 					_intake.setIntake( 0, 0);
 
 				} else {
 					System.out.println("Center Right");
-					_chassis.driveDist(200, drvSpd);
+					_chassis.driveDist(500, drvSpd);
+					Timer.delay(.2);
 					_chassis.turnToAngle(90, trnSpd);
-					_chassis.driveDist(400, drvSpd);
-					_chassis.turnToAngle(-85, trnSpd);
-					
-					_chassis.driveDist(600, drvSpd, _elevator);
-					Timer.delay(0.25);
-					
+					_chassis.driveDist(450, drvSpd);
+					Timer.delay(.2);
+					_chassis.turnToAngle(-90, trnSpd);
+					_chassis.driveDist(350, drvSpd, _elevator, 1.75);
+					Timer.delay(.2);
 					_intake.setIntake(-.25, -.25);
 					Timer.delay(1.5);
 					_intake.setIntake( 0, 0);
@@ -193,9 +223,20 @@ public class Robot extends IterativeRobot {
 				_chassis.driveDist(1200, drvSpd);
 				break;
 			case defaultAuto:
-				_chassis.turnToAngle(90, 0.35);
-				Timer.delay(1.0);
-//				_chassis.turnToAngle(90.0, 0.35);
+								_chassis.turnToAngle(-85, trnSpd - 0.1);
+//								_chassis.turnToAngle(-90, trnSpd);
+				//				Timer.delay(1.0);
+				//				_chassis.turnToAngle(90.0, 0.35);
+				//				_chassis.driveDist(500, .5);
+				//				Timer.delay(.2);
+				//				_chassis.turnToAngle(90, .8);
+				//				_chassis.driveDist(500, .5);
+				//				Timer.delay(.2);
+				//				_chassis.turnToAngle(90, .8);
+				//				_chassis.driveDist(500, .5);
+				//				Timer.delay(.2);
+				//				_chassis.turnToAngle(90, .8);
+				//				_chassis.driveDist(500, .5);
 				break;
 
 			}
@@ -207,36 +248,44 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	@Override
-	
+
 	//Runs Teleop
 	public void teleopPeriodic(){
 		_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis() * spdMult, 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis()*spdMult, 3) ,-1.0, 0, 1.0));
 
+		if(!_elevator.getLimit()) {
+			System.out.println("Pressed");
+		}
+
 		if(_oi.getXButton()) {
-			spdMult = 0.5;
+			spdMult = 0.6;
 		}else if(_oi.getTriangleButton()) {
 			spdMult = 1.0;
 		}
-		
-//		System.out.println("Angle: " + _chassis.getAngle());
-	//	System.out.println("Right Encoder: " + _chassis.getRightEncoder());
-//		
+
+		//	System.out.println("Angle: " + _chassis.getAngle());
+		//	System.out.println("Right Encoder: " + _chassis.getRightEncoder());
+
 		if(_oi.getXButtonC2()) {
 			_intake.setIntake(0.4, 0.55);
+		}else if(_oi.getCircleButtonC2()) {
+			_intake.setIntake(-1.0, -1.0);
 		}else if (_oi.getTriangleButtonC2()) {
-			_intake.setIntake(-0.8, -0.8);
+			_intake.setIntake(-0.5, -0.5);
+		}else if (_oi.getSquareButtonC2()){
+			_intake.setIntake(-0.25 , -0.25);
 		}else {
-			_intake.setIntake(0.0 , 0.0);
+			_intake.setIntake(0 , 0);			
 		}
-		
-		if(_oi.getR2C2()> 0.05) {
-			_elevator.setElevator( Math.pow(_oi.normalize(_oi.getR2C2(), -1, 0, 1), 3)) ;
+
+		if(_oi.getR2C2()> 0.05 && _elevator.getLimit()) {
+			_elevator.setElevator(	 Math.pow(_oi.normalize(_oi.getR2C2(), -1, 0, 1), 3)) ;
 		}else if(_oi.getL2C2() > 0.05){
 			_elevator.setElevator(  Math.pow(_oi.normalize(-1.0 *_oi.getL2C2(), -1, 0, 1), 3));
 		}else{
 			_elevator.setElevator( 0 );
 		}
-		
+
 		if(_oi.getR1C2()) {
 			_climber.setClimber(1.0);
 		}else if(_oi.getL1C2()) {
@@ -244,72 +293,6 @@ public class Robot extends IterativeRobot {
 		}else {
 			_climber.setClimber(0.0);
 		}
-		
-		//Runs intake wheels
-//		while(_oi.getXButtonC2()) {
-//			_intake.setIntake(0.4, 0.55);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//			if(_oi.getR1C2()) {
-//				_climber.setClimber(1.0);
-//			}else if(_oi.getL1C2()) {
-//		
-//		_climber.setClimber(-1.0);
-//			}else {
-//				_climber.setClimber(0.0);
-//			}
-//		}
-//		
-//		while(_oi.getTriangleButtonC2()) {
-//			_intake.setIntake(-0.8, -0.8);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//			if(_oi.getR1C2()) {
-//				_climber.setClimber(1.0);
-//			}else if(_oi.getL1C2()) {
-//				_climber.setClimber(-1.0);
-//			}else {
-//				_climber.setClimber(0.0);
-//			}
-//		}
-//	
-//		_intake.setIntake( 0.0, 0.0 );
-//		
-//		//Run elevator - *Variable Speed*
-//		while(_oi.getR2C2()> 0.1)
-//			_elevator.setElevator( _oi.getR2C2() * .8);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//			if(_oi.getR1C2()) {
-//				_climber.setClimber(1.0);
-//			}else if(_oi.getL1C2()) {
-//				_climber.setClimber(-1.0);
-//			}else {
-//				_climber.setClimber(0.0);
-//			}
-//		while(_oi.getL2C2() > 0.1) {
-//			_elevator.setElevator(-1 * _oi.getL2C2() * .6);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//			if(_oi.getR1C2()) {
-//				_climber.setClimber(1.0);
-//			}else if(_oi.getL1C2()) {
-//				_climber.setClimber(-1.0);
-//			}else {
-//				_climber.setClimber(0.0);
-//			}
-//		}
-//		_elevator.setElevator(0.0);
-//		
-//		//Runs climber - *Constant Speed*
-//		if(_oi.getR1C2()) {
-//			_climber.setClimber(1.0);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//		}else if(_oi.getL1C2()) {
-//			_climber.setClimber(-1.0);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//		}else {
-//			_climber.setClimber(0.0);
-//			_chassis.tankDrive(OI.normalize( Math.pow(_oi.getRJoystickXAxis(), 3) , -1.0, 0, 1.0), OI.normalize( Math.pow(_oi.getLJoystickYAxis(), 3) ,-1.0, 0, 1.0));
-//		}
-//
-//		//		System.out.println(_chassis.getAngle());
 	}
 
 	/**

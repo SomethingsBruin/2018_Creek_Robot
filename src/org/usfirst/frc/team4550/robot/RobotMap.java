@@ -78,6 +78,9 @@ public class RobotMap {
 	//Talon ports for Elevator
 	public static final int ELEVATOR = 7;
 	
+	//Port for Limit Switch
+	public static final int ELEVATOR_LIMIT = 6;
+	
 	//Port for Break Beam Sensor 
 	public static final int BREAK_SENSOR = -1;
 	

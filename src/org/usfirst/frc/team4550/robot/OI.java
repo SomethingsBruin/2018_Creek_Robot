@@ -168,6 +168,15 @@ public class OI {
 	{
 		return _controller2.getRawButton( TRIANGLE_BUTTON );
 	}
+	public boolean getSquareButtonC2( )
+	{
+		//Returns whether or not the x button is being pressed
+		return _controller2.getRawButton( SQUARE_BUTTON );
+	}
+	public boolean getCircleButtonC2( )
+	{
+		return _controller2.getRawButton( O_BUTTON );
+	}
 	////
 
 	

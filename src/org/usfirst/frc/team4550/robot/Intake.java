@@ -11,8 +11,8 @@ public class Intake {
 
 	private TalonSRX _talon1;
 	private TalonSRX _talon2;
-	DigitalInput _sensor;
-	DigitalOutput _led;
+//	DigitalInput _sensor;
+//	DigitalOutput _led;
 	 
 
 

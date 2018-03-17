@@ -117,16 +117,17 @@ public class Chassis {
 			} else if (distance - _leftEncoder.getDistance() < 100) {
 				tankDrive(0, speed / 2);
 			} else {
-				tankDrive(0, speed);
+				tankDrive(this.getAngle()/-100, speed);
 			}
 //			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 		}
 		tankDrive(0, 0);
 		
 		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
+		System.out.println("Gyro: " + this.getAngle());
 	}
 	
-	public void driveDist(double distance, double speed, Elevator elevator) {
+	public void driveDist(double distance, double speed, Elevator elevator, double time) {
 		reset();
 		Timer t = new Timer();
 		t.start();
@@ -136,10 +137,10 @@ public class Chassis {
 			} else if (distance - _leftEncoder.getDistance() < 100) {
 				tankDrive(0, speed / 2);
 			} else {
-				tankDrive(0, speed);
+				tankDrive(this.getAngle()/-100, speed);
 			}
 			
-			if(t.get() < 2.75) {
+			if(t.get() < time && elevator.getLimit()) {
 				elevator.setElevator(0.8);
 			}else {
 				elevator.setElevator(0.0);
@@ -148,7 +149,7 @@ public class Chassis {
 //			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 		}
 		tankDrive(0, 0);
-		while(t.get() < 2.75) {
+		while(t.get() < time && elevator.getLimit()) {
 			elevator.setElevator(0.8);
 		}
 		elevator.setElevator(0.0);
@@ -199,13 +200,18 @@ public class Chassis {
 
 	//Turns to a specific angle(For Autonomous)
 	public void turnToAngle(double angle, double speed) {
-		boolean done = false;
 		reset();
+		
+		if(angle > 0)
+			angle -= 4;
+		else
+			angle += 12;
+		boolean done = false;
 
 		// Default speed is at 0.7
 		long maxTime = 1000;// 1.5 seconds
 		double time = 0.0;
-		double Kp = 0.69;
+		double Kp = 1.35;
 		double Ki = 0.0;
 		double Kd = 0.7;
 		
@@ -250,14 +256,15 @@ public class Chassis {
 		System.out.println("Avg: " + (this.getLeftEncoder() - this.getRightEncoder())/2 );
 		this.stop();
 		done = false;
+		
 	}
 	
 	//Turns the wheels(for teleop)
 	public void turn(double speed) {
 		//RIGHT MOTORS: CHANGE SPEED TO POSITIVE
 		_frontLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
-		_frontRight.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
+		_frontRight.set(ControlMode.PercentOutput, OI.normalize(speed,-1,0,1));
 		_rearLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
-		_rearRight.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
+		_rearRight.set(ControlMode.PercentOutput, OI.normalize(speed,-1,0,1));
 	}
 }

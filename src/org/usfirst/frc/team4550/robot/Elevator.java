@@ -26,6 +26,12 @@ public class Elevator {
 	public boolean getLimit() {
 		return upperLim.get();
 	}
+	
+	public void moveTime(double speed, double time) {
+		setElevator(speed);
+		Timer.delay(time);
+		setElevator(0);
+	}
 
 	
 }

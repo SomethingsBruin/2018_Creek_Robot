@@ -255,16 +255,5 @@ public class OI {
 		//Otherwise the value is fine
 		return value;
 	}
-	
-	public static double deadBand( double value, double min, double deadBand, double max ){
-		if(value > -deadBand && value < deadBand){
-			return 0;
-		} else if(value < -deadBand && value>min){
-			return ((value * (10/9)) + (1/9));
-		} else if (value < max){
-			return ((value * (10/9)) - (1/9));
-		} else {
-			return 0;
-		}
-	}
+
 }

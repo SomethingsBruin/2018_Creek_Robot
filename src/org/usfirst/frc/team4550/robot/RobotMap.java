@@ -73,7 +73,7 @@ public class RobotMap {
 	public static final int INTAKE_B = 4;
 
 	//Talon ports for Climber
-	public static final int CLIMBER = 6;
+	public static final int CLIMBER = -1;
 	
 	//Talon ports for Elevator
 	public static final int ELEVATOR = 7;

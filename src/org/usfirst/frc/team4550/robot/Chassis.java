@@ -97,11 +97,11 @@ public class Chassis {
 		reset();
 		Timer t = new Timer();
 		t.start();
-		while ( ( getLeftEncoder() + getRightEncoder() )/2 <= distance && t.get() < 3) {
-			tankDrive(0, speed);
+		while ( Math.abs ( ( getLeftEncoder() + getRightEncoder() )/2) <= distance && t.get() < 3) {
+			tankDrive(-0.005, speed);
 //			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 		}
-		tankDrive(0, 0);
+		tankDrive(0, 0.0);
 		
 		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 	}
@@ -109,35 +109,42 @@ public class Chassis {
 	//Drives to a Distance 
 	public void driveDist(double distance, double speed) {
 		reset();
+		double startLeft = getLeftEncoder();
+		double startRight = getRightEncoder();
 		Timer t = new Timer();
 		t.start();
-		while ( ( getLeftEncoder() + getRightEncoder() )/2 <= distance && t.get() < 15) {
+		while ( Math.abs( ( (getLeftEncoder() - startLeft) + ( getRightEncoder() -startRight) )/2) <= distance && t.get() < 15) {
 			if (t.get() < .5) {
 				tankDrive(0, speed * (t.get() * 2));
 			} else if (distance - _leftEncoder.getDistance() < 100) {
 				tankDrive(0, speed / 2);
 			} else {
-				tankDrive(this.getAngle()/-100, speed);
+				tankDrive(0.0, speed);
 			}
 //			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
 		}
 		tankDrive(0, 0);
 		
-		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
+		System.out.println("Encoder: " + (( getLeftEncoder() + getRightEncoder() )/2 ) );
 		System.out.println("Gyro: " + this.getAngle());
+		System.out.println();
 	}
 	
 	public void driveDist(double distance, double speed, Elevator elevator, double time) {
 		reset();
 		Timer t = new Timer();
 		t.start();
-		while ( ( getLeftEncoder() + getRightEncoder() )/2 <= distance && t.get() < 15) {
+		int timeOut = 10;
+		if(distance < 500) {
+			timeOut = 5;
+		}
+		while ( Math.abs( ( getLeftEncoder() + getRightEncoder() )/2 ) <= distance && t.get() < timeOut) {
 			if (t.get() < .5) {
-				tankDrive(0, speed * (t.get() * 2));
+				tankDrive(-0.005, speed * (t.get() * 2));
 			} else if (distance - _leftEncoder.getDistance() < 100) {
 				tankDrive(0, speed / 2);
 			} else {
-				tankDrive(this.getAngle()/-100, speed);
+				tankDrive(-0.005, speed);
 			}
 			
 			if(t.get() < time && elevator.getLimit()) {
@@ -153,7 +160,29 @@ public class Chassis {
 			elevator.setElevator(0.8);
 		}
 		elevator.setElevator(0.0);
-		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
+		System.out.println("Left Encoder: " + getLeftEncoder());
+		System.out.println("Right Encoder: " + getRightEncoder());
+		System.out.println("Encoder: " + (( getLeftEncoder() + getRightEncoder())/2));
+	}
+	
+	public void turnDist(double distance, double  speed) {
+		reset();
+		double startLeft = getLeftEncoder();
+		double startRight = getRightEncoder();
+//		System.out.println("Init Left" + startLeft + "      InitRight: " + startRight);
+		Timer t = new Timer();
+		t.start();
+		while ( Math.abs( (((getLeftEncoder() - startLeft)-( getRightEncoder() -startRight))/2) ) <= distance && t.get() < 2.5) {
+				turn( -speed );
+//			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
+		}
+		tankDrive(0, 0);
+		
+		System.out.println("Left Encoder:  " + getLeftEncoder());
+		System.out.println("Right Encoder: " + getRightEncoder());
+		System.out.println("Avg Encoder: " + Math.abs( (( getLeftEncoder() - getRightEncoder() )/2) ));
+		System.out.println("Gyro: " + this.getAngle());
+		System.out.println();
 	}
 	
 	//Gets instance for chassis 
@@ -171,7 +200,7 @@ public class Chassis {
 	
 	//URGENT REMINDER: RIGHT ENCODER RETURNS NEGATIVE VALUES ON COMP ROBOT - CHANGE BEFORE COMP
 	public double getRightEncoder() {
-		return _rightEncoder.getDistance();
+		return -1.0 * _rightEncoder.getDistance();
 	}
 	//Resets encoder value
 	public void reset() {
@@ -202,16 +231,16 @@ public class Chassis {
 	public void turnToAngle(double angle, double speed) {
 		reset();
 		
-		if(angle > 0)
-			angle -= 4;
-		else
-			angle += 12;
+//		if(angle > 0)
+//			angle -= 4;
+//		else
+//			angle += 12;
 		boolean done = false;
 
 		// Default speed is at 0.7
 		long maxTime = 1000;// 1.5 seconds
 		double time = 0.0;
-		double Kp = 1.35;
+		double Kp = .9;
 		double Ki = 0.0;
 		double Kd = 0.7;
 		

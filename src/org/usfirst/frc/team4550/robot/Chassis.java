@@ -1,299 +1,165 @@
 package org.usfirst.frc.team4550.robot;
 
-import org.usfirst.frc.team4550.robot.RobotMap;
-import com.kauailabs.navx.frc.AHRS;
+import org.first.frc.team4550.controls.CCTalon;
 
-import edu.wpi.first.wpilibj.AnalogOutput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import com.ctre.phoenix.*;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//import com.kauailabs.navx.frc.AHRS;
 
-public class Chassis {
-	public Encoder _leftEncoder;
-	public Encoder _rightEncoder;
+public class Chassis
+{
 	
-	//	CCTalon _frontLeft;
-	//	CCTalon _frontRight;
-	//	CCTalon _rearLeft;
-	//	CCTalon _rearRight;
-
-	TalonSRX _frontLeft;
-	TalonSRX _frontRight;
-	TalonSRX _rearLeft;
-	TalonSRX _rearRight;
-
-	AHRS _gyro;
-	AnalogOutput _ultra;
-
-	private static Chassis _instance;
-	//Creates the Chassis
-	private Chassis() {
-		_frontLeft = new TalonSRX(RobotMap.LEFT_FORWARD_PORT);
-		_frontRight = new TalonSRX(RobotMap.RIGHT_FORWARD_PORT);
-		_rearLeft = new TalonSRX(RobotMap.LEFT_REAR_PORT);
-		_rearRight = new TalonSRX(RobotMap.RIGHT_REAR_PORT);
-
-		_frontLeft.setInverted(RobotMap.LEFT_FORWARD_REVERSE);
-		_frontRight.setInverted(RobotMap.RIGHT_FORWARD_REVERSE);
-		_rearLeft.setInverted(RobotMap.LEFT_REAR_REVERSE);
-		_rearRight.setInverted(RobotMap.RIGHT_REAR_REVERSE);
-
-
-		_frontLeft.setNeutralMode(NeutralMode.Brake);
-		_frontRight.setNeutralMode(NeutralMode.Brake);
-		_rearLeft.setNeutralMode(NeutralMode.Brake);
-		_rearRight.setNeutralMode(NeutralMode.Brake);
-
-		_leftEncoder = new Encoder(RobotMap.ENCODER_A_LEFT,
-				RobotMap.ENCODER_B_LEFT);
-		_rightEncoder = new Encoder(RobotMap.ENCODER_A_RIGHT, RobotMap.ENCODER_B_RIGHT);
-		//		_ultra  = new AnalogOutput(RobotMap.ULTRA_PORT);
-
-		try {
-			_gyro = new AHRS(SPI.Port.kMXP);
-		} catch (RuntimeException e) {
-			DriverStation.reportError(
-					"Error instantiating navX-MXP:  " + e.getMessage(), true);
-		}
-	}
-	//Drive Method(Drives Robot)
-	public void drive(double xAxis, double yAxis) {
-		// System.out.println("speedCheck: " + speedCheck(xAxis));
-		xAxis += speedCheck(xAxis);
-		// System.out.println("speedCheck(Y): " + speedCheck(yAxis));
-		yAxis += speedCheck(yAxis);
-		_frontLeft.set(ControlMode.PercentOutput, OI.normalize((yAxis + xAxis), -1.0, 0, 1.0));
-		_frontRight.set(ControlMode.PercentOutput, OI.normalize((yAxis - xAxis), -1.0, 0, 1.0));
-		_rearLeft.set(ControlMode.PercentOutput, OI.normalize((yAxis + xAxis), -1.0, 0, 1.0));
-		_rearRight.set(ControlMode.PercentOutput, OI.normalize((yAxis - xAxis), -1.0, 0, 1.0));
-		// System.out.println("xAxis: "+xAxis);
-		// System.out.println("yAxis: "+yAxis);
-	}
-	//Tank Drive Method(Drives Robot, but better?)
-	public void tankDrive(double xAxis, double yAxis) {
-		_frontLeft.set(ControlMode.PercentOutput, OI.normalize((yAxis + xAxis), -1.0, 0, 1.0));
-		_frontRight.set(ControlMode.PercentOutput, OI.normalize((yAxis - xAxis), -1.0, 0, 1.0));
-		_rearLeft.set(ControlMode.PercentOutput, OI.normalize((yAxis + xAxis), -1.0, 0, 1.0));
-		_rearRight.set(ControlMode.PercentOutput, OI.normalize((yAxis - xAxis), -1.0, 0, 1.0));
-
-	}
-	//Sets intake Spd
-	//Checks speed while turning, Corrects for over 1.0
-	public double speedCheck(double Spd) {
-		if (Spd > 1.0) {
-			return -((Spd - 1.0) * 0.5);
-		} else if (Spd < -1.0) {
-			return -((Spd + 1.0) * 0.5);
-		}
-		return 0.0;
-	}
-	public void driveDistNonTrapezoidal(double distance, double speed) {
-		reset();
-		Timer t = new Timer();
-		t.start();
-		while ( Math.abs ( ( getLeftEncoder() + getRightEncoder() )/2) <= distance && t.get() < 3) {
-			tankDrive(-0.005, speed);
-//			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
-		}
-		tankDrive(0, 0.0);
-		
-		System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
-	}
+	private static Chassis _instance;//The current chassis
 	
-	//Drives to a Distance 
-	public void driveDist(double distance, double speed) {
-		reset();
-		double startLeft = getLeftEncoder();
-		double startRight = getRightEncoder();
-		Timer t = new Timer();
-		t.start();
-		while ( Math.abs( ( (getLeftEncoder() - startLeft) + ( getRightEncoder() -startRight) )/2) <= distance && t.get() < 15) {
-			if (t.get() < .5) {
-				tankDrive(0, speed * (t.get() * 2));
-			} else if (distance - _leftEncoder.getDistance() < 100) {
-				tankDrive(0, speed / 2);
-			} else {
-				tankDrive(0.0, speed);
-			}
-//			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
-		}
-		tankDrive(0, 0);
-		
-		System.out.println("Encoder: " + (( getLeftEncoder() + getRightEncoder() )/2 ) );
-		System.out.println("Gyro: " + this.getAngle());
-		System.out.println();
-	}
+	private CCTalon _leftFront;// The left front talon on the robot
+	private CCTalon _rightFront;// The right front talon on the robot
+	private CCTalon _leftRear;//The left rear talon on the robot
+	private CCTalon _rightRear;//The right rear talon on the robot
+//	private AHRS _gyro; // this is a gyroscope
+	private Servo _servo;
+
+	private double rotateToAngleRate;
 	
-	public void driveDist(double distance, double speed, Elevator elevator, double time) {
-		reset();
-		Timer t = new Timer();
-		t.start();
-		int timeOut = 10;
-		if(distance < 500) {
-			timeOut = 5;
+	private Chassis( )
+	{
+		//Initializes the talons
+		_leftFront = new CCTalon( RobotMap.LEFT_FRONT_TALON_PORT, RobotMap.LEFT_FRONT_TALON_REVERSE );
+		_rightFront = new CCTalon( RobotMap.RIGHT_FRONT_TALON_PORT, RobotMap.RIGHT_FRONT_TALON_REVERSE );
+		_leftRear = new CCTalon( RobotMap.LEFT_REAR_TALON_PORT, RobotMap.LEFT_REAR_TALON_REVERSE );
+		_rightRear = new CCTalon( RobotMap.RIGHT_REAR_TALON_PORT, RobotMap.RIGHT_REAR_TALON_REVERSE );
+		try{
+//			_gyro = new AHRS(SPI.Port.kMXP);
+		}catch( RuntimeException ex ){
+			 DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 		}
-		while ( Math.abs( ( getLeftEncoder() + getRightEncoder() )/2 ) <= distance && t.get() < timeOut) {
-			if (t.get() < .5) {
-				tankDrive(-0.005, speed * (t.get() * 2));
-			} else if (distance - _leftEncoder.getDistance() < 100) {
-				tankDrive(0, speed / 2);
-			} else {
-				tankDrive(-0.005, speed);
-			}
-			
-			if(t.get() < time && elevator.getLimit()) {
-				elevator.setElevator(0.8);
-			}else {
-				elevator.setElevator(0.0);
-			}
-			
-//			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
-		}
-		tankDrive(0, 0);
-		while(t.get() < time && elevator.getLimit()) {
-			elevator.setElevator(0.8);
-		}
-		elevator.setElevator(0.0);
-		System.out.println("Left Encoder: " + getLeftEncoder());
-		System.out.println("Right Encoder: " + getRightEncoder());
-		System.out.println("Encoder: " + (( getLeftEncoder() + getRightEncoder())/2));
-	}
+		_servo = new Servo(6);
+	}	
 	
-	public void turnDist(double distance, double  speed) {
-		reset();
-		double startLeft = getLeftEncoder();
-		double startRight = getRightEncoder();
-//		System.out.println("Init Left" + startLeft + "      InitRight: " + startRight);
-		Timer t = new Timer();
-		t.start();
-		while ( Math.abs( (((getLeftEncoder() - startLeft)-( getRightEncoder() -startRight))/2) ) <= distance && t.get() < 2.5) {
-				turn( -speed );
-//			System.out.println("Encoder: " + (( _leftEncoder.getDistance() + _rightEncoder.getDistance())/2));
-		}
-		tankDrive(0, 0);
-		
-		System.out.println("Left Encoder:  " + getLeftEncoder());
-		System.out.println("Right Encoder: " + getRightEncoder());
-		System.out.println("Avg Encoder: " + Math.abs( (( getLeftEncoder() - getRightEncoder() )/2) ));
-		System.out.println("Gyro: " + this.getAngle());
-		System.out.println();
-	}
-	
-	//Gets instance for chassis 
-	public static Chassis getInstance() {
-		if (_instance == null) {
+	/**
+	 * Singleton of the Chassis
+	 * @return the Chassis in use
+	 */
+	public static Chassis getInstance()
+	{
+		//Creates a new chassis if we already don't have one and returns the chassis if we do
+		if( _instance == null )
+		{
 			_instance = new Chassis();
 		}
 		return _instance;
 	}
-	//Checks Encoder, and returns it 
-	public double getLeftEncoder() {
-		return _leftEncoder.getDistance();
+	/**
+	 * Drives the T-Shirt shooter
+	 * @param fwd
+	 * @param sld
+	 * @param rot
+	 */
+	public void holoDrive( double fwd, double sld, double rot )
+    {
+        //Calculates the vector for each motor given the forward, slide, and rotation values.
+        double lf = fwd + sld + rot;
+        double rf = fwd - sld - rot;
+        double lr = fwd - sld + rot;
+        double rr = fwd + sld - rot;
+        
+        //Makes the max value equal to the left motor.
+        double maxVal = Math.abs( lf );
+        
+        //If any motor value is greater than the max value, make the max value equal to that motor value.
+        if ( Math.abs( rf ) > maxVal )
+        {
+            maxVal = Math.abs( rf );
+        }
+        
+        if ( Math.abs( lr ) > maxVal )
+        {
+            maxVal = Math.abs( lr );
+        }
+        
+        if ( Math.abs( rr ) > maxVal )
+        {
+            maxVal = Math.abs( rr );
+        }
+        
+        //If the max value was greater than one or less than negative one...
+        if( maxVal > 1.0 ) 
+        {
+            //Limit that motor value and scale the other motor values appropriately.
+            lf /= maxVal;
+            rf /= maxVal;
+            lr /= maxVal;
+            rr /= maxVal;
+        }
+         
+        //Set each motor to its corresponding value.
+        _leftFront.set( lf );
+        _rightFront.set( rf );
+        _leftRear.set( lr );
+        _rightRear.set( rr );
+    }
+	
+	/**
+	 * Stops the robot
+	 */
+	public void stop()
+	{
+		// Stops the robot
+		_leftFront.set( 0 );
+		_rightFront.set( 0 );
+		_leftRear.set( 0 );
+		_rightRear.set( 0 );
 	}
 	
-	
-	//URGENT REMINDER: RIGHT ENCODER RETURNS NEGATIVE VALUES ON COMP ROBOT - CHANGE BEFORE COMP
-	public double getRightEncoder() {
-		return -1.0 * _rightEncoder.getDistance();
-	}
-	//Resets encoder value
-	public void reset() {
-		_leftEncoder.reset();
-		_rightEncoder.reset();
-		_gyro.reset();
-	}
-	//Checks and returns angle 
-	public double getAngle() {
-		return _gyro.getAngle();
-	}
-
-	//	public double getUltraValue() {
-	//		return _ultra.getVoltage();
-	//	} 
-
-	//	public double returnDistance() {
-	//		_ultra
-	//	}
-
-	//Stops the Robot
-	public void stop() {
-		tankDrive(0, 0);
-	}
-
-
-	//Turns to a specific angle(For Autonomous)
-	public void turnToAngle(double angle, double speed) {
-		reset();
-		
-//		if(angle > 0)
-//			angle -= 4;
-//		else
-//			angle += 12;
-		boolean done = false;
-
-		// Default speed is at 0.7
-		long maxTime = 1000;// 1.5 seconds
-		double time = 0.0;
-		double Kp = .9;
-		double Ki = 0.0;
-		double Kd = 0.7;
-		
-
-		// PID variables
-		double moveSpeed = speed / 2;
-		double error = 0.0;
-		double prevError = 0.0;
-		double errorSum = 0.0;
-
-		angle += this.getAngle();
-
-		time = System.currentTimeMillis();
-
-		// PID loop
-		while (!done) {
-			prevError = error;
-			// System.out.println( " GYRO: " + this.getAngle() );
-			error = (angle - this.getAngle()) / 100.0;
-			errorSum += error;
-			errorSum = OI.normalize(errorSum, -5, 0, 5);
-
-			// System.out.println( "error: " + error + " errorSum: " + errorSum
-			// );
-
-			double p = error * Kp;
-			double i = errorSum * Ki;
-			double d = (error - prevError) * Kd;
-
-			this.turn(OI.normalize(-1 * (p + i + d), -moveSpeed, 0, moveSpeed));
-
-			if ((Math.abs(errorSum) < 0.5) || (System.currentTimeMillis() > time + maxTime)) {
-				done = true;
-				break;
-			}
-		}
-		Timer.delay(1);
-		
-		System.out.println("Angle turnt to: " + this.getAngle());
-		System.out.println("Left Encoder value: " + this.getLeftEncoder());
-		System.out.println("Right Encoder value: " + this.getRightEncoder());
-		System.out.println("Avg: " + (this.getLeftEncoder() - this.getRightEncoder())/2 );
-		this.stop();
-		done = false;
-		
+	/**
+	 * Resets the Chassis
+	 */
+	public void reset()
+	{
+		stop();
 	}
 	
-	//Turns the wheels(for teleop)
-	public void turn(double speed) {
-		//RIGHT MOTORS: CHANGE SPEED TO POSITIVE
-		_frontLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
-		_frontRight.set(ControlMode.PercentOutput, OI.normalize(speed,-1,0,1));
-		_rearLeft.set(ControlMode.PercentOutput, OI.normalize(-speed,-1,0,1));
-		_rearRight.set(ControlMode.PercentOutput, OI.normalize(speed,-1,0,1));
+	public void normalDrive( double y )
+	{
+		_leftFront.set( y );
+		_rightFront.set( y );
+		_leftRear.set( y );
+		_rightRear.set( y );
 	}
+	
+	public void turnToAngle(double degree, double speed )
+	{
+//		
+//		double Kp = 0.0;
+//		double Ki = 0.0;
+//		double Kd = 0.0;
+//		double Kf = 0.0;
+//		
+////		//PIDController controller = new PIDController(Kp, Ki, Kd, Kf, _gyro, this);
+////		
+////		controller.setInputRange(-180.0f,  180.0f);
+////	    controller.setOutputRange(-1.0, 1.0);
+////	    controller.setAbsoluteTolerance(2.0f);
+////	    controller.setContinuous(true);
+//		
+//	    LiveWindow.addActuator("DriveSystem", "RotateController", controller);
+//	    
+//	    _gyro.reset();
+//	    
+//	    controller.setSetpoint(degree);
+//	    double currentRotationRate;
+//	    controller.enable();
+//	    currentRotationRate = rotateToAngleRate;
+	}
+
+
+	public void setServo(double pos){
+		_servo.set(pos);
+	}
+	
 }
